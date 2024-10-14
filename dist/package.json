@@ -1,5 +1,5 @@
 {
-  "name": "@Skalv/protos",
+  "name": "@ninion/protos",
   "version": "0.0.1",
   "author": "Boutin Florent <florent@stakelab.zone>",
   "description": "Protobufs JS for multi cosmos app",
@@ -7,9 +7,9 @@
   "module": "esm/index.js",
   "types": "index.d.ts",
   "homepage": "https://github.com/Skalv/protos",
-  "license": "SEE LICENSE IN LICENSE",
+  "license": "MIT",
   "publishConfig": {
-    "access": "restricted",
+    "access": "public",
     "directory": "dist"
   },
   "repository": {
