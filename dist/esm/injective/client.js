@@ -1,0 +1,44 @@
+//@ts-nocheck
+import { Registry } from "@cosmjs/proto-signing";
+import { defaultRegistryTypes, AminoTypes, SigningStargateClient } from "@cosmjs/stargate";
+import * as injectiveAuctionV1beta1TxRegistry from "./auction/v1beta1/tx.registry";
+import * as injectiveExchangeV1beta1TxRegistry from "./exchange/v1beta1/tx.registry";
+import * as injectiveInsuranceV1beta1TxRegistry from "./insurance/v1beta1/tx.registry";
+import * as injectiveOcrV1beta1TxRegistry from "./ocr/v1beta1/tx.registry";
+import * as injectiveOracleV1beta1TxRegistry from "./oracle/v1beta1/tx.registry";
+import * as injectivePeggyV1MsgsRegistry from "./peggy/v1/msgs.registry";
+import * as injectiveAuctionV1beta1TxAmino from "./auction/v1beta1/tx.amino";
+import * as injectiveExchangeV1beta1TxAmino from "./exchange/v1beta1/tx.amino";
+import * as injectiveInsuranceV1beta1TxAmino from "./insurance/v1beta1/tx.amino";
+import * as injectiveOcrV1beta1TxAmino from "./ocr/v1beta1/tx.amino";
+import * as injectiveOracleV1beta1TxAmino from "./oracle/v1beta1/tx.amino";
+import * as injectivePeggyV1MsgsAmino from "./peggy/v1/msgs.amino";
+export const injectiveAminoConverters = {
+    ...injectiveAuctionV1beta1TxAmino.AminoConverter,
+    ...injectiveExchangeV1beta1TxAmino.AminoConverter,
+    ...injectiveInsuranceV1beta1TxAmino.AminoConverter,
+    ...injectiveOcrV1beta1TxAmino.AminoConverter,
+    ...injectiveOracleV1beta1TxAmino.AminoConverter,
+    ...injectivePeggyV1MsgsAmino.AminoConverter
+};
+export const injectiveProtoRegistry = [...injectiveAuctionV1beta1TxRegistry.registry, ...injectiveExchangeV1beta1TxRegistry.registry, ...injectiveInsuranceV1beta1TxRegistry.registry, ...injectiveOcrV1beta1TxRegistry.registry, ...injectiveOracleV1beta1TxRegistry.registry, ...injectivePeggyV1MsgsRegistry.registry];
+export const getSigningInjectiveClientOptions = ({ defaultTypes = defaultRegistryTypes } = {}) => {
+    const registry = new Registry([...defaultTypes, ...injectiveProtoRegistry]);
+    const aminoTypes = new AminoTypes({
+        ...injectiveAminoConverters
+    });
+    return {
+        registry,
+        aminoTypes
+    };
+};
+export const getSigningInjectiveClient = async ({ rpcEndpoint, signer, defaultTypes = defaultRegistryTypes }) => {
+    const { registry, aminoTypes } = getSigningInjectiveClientOptions({
+        defaultTypes
+    });
+    const client = await SigningStargateClient.connectWithSigner(rpcEndpoint, signer, {
+        registry: registry,
+        aminoTypes
+    });
+    return client;
+};
